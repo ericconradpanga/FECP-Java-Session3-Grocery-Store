@@ -8,6 +8,9 @@ public class Main {
         HashMap<String, Integer> inventory = new HashMap<>();
         populateInventory(inventory);
 
+        String productName;
+        int quantity;
+
         int choice = 0;
         while (choice != 6) {
             displayMenu();
@@ -19,16 +22,34 @@ public class Main {
                     viewInventory(inventory);
                     break;
                 case 2:
-                    addProduct(inventory, scanner);
+                    System.out.print("Enter product name: ");
+                    productName = scanner.next();
+
+                    System.out.print("Enter quantity: ");
+                    quantity = scanner.nextInt();
+
+                    addProduct(inventory, productName, quantity);
                     break;
                 case 3:
-                    checkProduct(inventory, scanner);
+                    System.out.print("Enter product name to check: ");
+                    productName = scanner.next();
+
+                    checkProduct(inventory, productName);
                     break;
                 case 4:
-                    updateStock(inventory, scanner);
+                    System.out.print("Enter product name to update: ");
+                    productName = scanner.next();
+
+                    System.out.print("Enter new stock to quantity: ");
+                    quantity = scanner.nextInt();
+
+                    updateStock(inventory, productName, quantity);
                     break;
                 case 5:
-                    removeProduct(inventory, scanner);
+                    System.out.print("Enter product name to remove: ");
+                    productName = scanner.next();
+
+                    removeProduct(inventory, productName);
                     break;
                 case 6:
                     System.out.println("Exiting system...");
@@ -41,14 +62,14 @@ public class Main {
     }
 
     // method to populate the inventory with initial data
-    private static void populateInventory(HashMap<String, Integer> inventory) {
+    public static void populateInventory(HashMap<String, Integer> inventory) {
         inventory.put("Milk", 20);
         inventory.put("Bread", 15);
         inventory.put("Eggs", 30);
     }
 
     // method to print the menu
-    private static void displayMenu() {
+    public static void displayMenu() {
         System.out.println("--- Grocery Inventory Menu ---");
         System.out.println("1. View Inventory");
         System.out.println("2. Add Product");
@@ -60,7 +81,7 @@ public class Main {
     }
 
     // method to check if the inventory is empty
-    private static boolean inventoryIsEmpty(HashMap<String, Integer> inventory) {
+    public static boolean inventoryIsEmpty(HashMap<String, Integer> inventory) {
         if (inventory.isEmpty()) {
             System.out.println("Inventory is empty.\n");
             return true;
@@ -68,8 +89,8 @@ public class Main {
     }
 
     // method to print the inventory's contents
-    private static boolean viewInventory(HashMap<String, Integer> inventory) {
-        if (inventoryIsEmpty(inventory)) { return false; } // inventory should not be empty
+    public static void viewInventory(HashMap<String, Integer> inventory) {
+        if (inventoryIsEmpty(inventory)) { return; } // inventory should not be empty
 
         System.out.println("\nCurrent Inventory:");
 
@@ -79,58 +100,47 @@ public class Main {
         }
 
         System.out.println();
-        return true;
     }
 
     // method to add a product to the inventory
-    private static boolean addProduct(HashMap<String, Integer> inventory, Scanner scanner) {
+    public static boolean addProduct(HashMap<String, Integer> inventory, String productName, int quantity) {
         if (inventoryIsEmpty(inventory)) { return false; } // inventory should not be empty
-
-        System.out.print("Enter product name: ");
-        String productName = scanner.next();
-
-        System.out.print("Enter quantity: ");
-        int quantity = scanner.nextInt();
 
         if (quantity < 0) { // quantity should not be negative
             System.out.println("Invalid quantity.");
             return false;
         }
 
-        inventory.put(productName, quantity);
-        System.out.println("Product added!\n"); // add the product to the inventory
-        return true;
+        if (inventory.containsKey(productName)) {
+            System.out.println(productName + " already exists in inventory.");
+            return false;
+        } else {
+            inventory.put(productName, quantity);
+            System.out.println("Product added!\n"); // add the product to the inventory
+            return true;
+        }
     }
 
     // method to check if a product exists in the inventory
-    private static boolean checkProduct(HashMap<String, Integer> inventory, Scanner scanner) {
+    public static boolean checkProduct(HashMap<String, Integer> inventory, String productToCheck) {
         if (inventoryIsEmpty(inventory)) { return false; } // inventory should not be empty
 
-        System.out.print("Enter product name to check: ");
-        String productName = scanner.next();
-
         // check if key exists
-        if (inventory.containsKey(productName)) {
-            System.out.println(productName + " is in stock: " + inventory.get(productName) + "\n");
+        if (inventory.containsKey(productToCheck)) {
+            System.out.println(productToCheck + " is in stock: " + inventory.get(productToCheck) + "\n");
             return true;
         } else {
-            System.out.println("Product not found in inventory.\n");
+            System.out.println(productToCheck + " not found in inventory.\n");
             return false;
         }
     }
 
     // method to update the stock of a product
-    private static boolean updateStock(HashMap<String, Integer> inventory, Scanner scanner) {
+    public static boolean updateStock(HashMap<String, Integer> inventory, String productName, int newQuantity) {
         if (inventoryIsEmpty(inventory)) { return false; } // inventory should not be empty
-
-        System.out.print("Enter product name to update: ");
-        String productName = scanner.next();
 
         // check if key exists
         if (inventory.containsKey(productName)) {
-            System.out.print("Enter new stock to quantity: ");
-            int newQuantity = scanner.nextInt();
-
             // new quantity should not be negative
             if (newQuantity < 0) {
                 System.out.println("Invalid quantity.");
@@ -141,26 +151,36 @@ public class Main {
             System.out.println("Stock updated!\n");
             return true;
         } else {
-            System.out.println("Product not found in inventory.\n");
+            System.out.println(productName + " not found in inventory.\n");
             return false;
         }
     }
 
     // method to remove a product from the inventory
-    private static boolean removeProduct(HashMap<String, Integer> inventory, Scanner scanner) {
+    public static boolean removeProduct(HashMap<String, Integer> inventory, String productToRemove) {
         if (inventoryIsEmpty(inventory)) { return false; } // inventory should not be empty
 
-        System.out.print("Enter product name to remove: ");
-        String productName = scanner.next();
-
         // check if key exists
-        if (inventory.containsKey(productName)) {
-            inventory.remove(productName); // remove the product from the inventory
+        if (inventory.containsKey(productToRemove)) {
+            inventory.remove(productToRemove); // remove the product from the inventory
             System.out.println("Product removed.\n");
             return true;
         } else {
-            System.out.println("Product not found in inventory.\n");
+            System.out.println(productToRemove + " not found in inventory.\n");
             return false;
+        }
+    }
+
+    // method to retrieve the quantity of an existing product
+    public static int getQuantity(HashMap<String, Integer> inventory, String productName) {
+        if (inventoryIsEmpty(inventory)) { return -1; } // inventory should not be empty
+
+        // check if key exists
+        if (inventory.containsKey(productName)) {
+            return inventory.get(productName);
+        } else {
+            System.out.println(productName + " not found in inventory.\n");
+            return -1;
         }
     }
 }
